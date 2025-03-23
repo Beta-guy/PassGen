@@ -22,16 +22,6 @@ def save_input():
             special_value = "yes"
         case 0:
             special_value = "no"
-#to delete
-    match system:
-        case "linux":
-            subprocess.run(["./passgen", site_value, username_value, max_value, special_value])
-            messagebox.showinfo("Information", "Password Generated!")
-        case "win32":
-            subprocess.run(["passgen1.exe", site_value, username_value, max_value, special_value])
-            messagebox.showinfo("Information", "Password Generated!")
-        case _:
-            print("Unsupported OS!")
 
 #GUI Fun!
 root = Tk()
