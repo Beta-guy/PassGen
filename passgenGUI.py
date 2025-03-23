@@ -2,6 +2,7 @@
 from tkinter import *
 import subprocess
 import sys
+import random
 #collecting Information
 def save_input():
     system = sys.platform
@@ -22,10 +23,19 @@ def save_input():
             special_value = "yes"
         case 0:
             special_value = "no"
-
+#defining list types
+low = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+upp = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+num = [1,2,3,4,5,6,7,8,9,0]
+spe = ["!","@","#","$","%","^","&","*","(",")","?","<",">"]
+spa = [" "]
 #GUI Fun!
 root = Tk()
-root.title("P@s$-G3n")
+#rnd title
+title = random.sample(low+upp+num+spe+spa, k=12)
+root.title(title)
+
+#window size
 root.geometry("500x200")
 
 site = Entry(root, width=30)
