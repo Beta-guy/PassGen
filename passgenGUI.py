@@ -38,15 +38,6 @@ numbers = "1234567890"
 spe = "!@#$%^&*()-+<>?"
 spa = " "
 
-
-
-
-
-
-
-
-
-
 #GUI Fun!
 root = Tk()
 #rnd title
