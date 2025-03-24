@@ -1,9 +1,9 @@
 #imports
-from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button
+from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button, ttk, Toplevel
 import csv, pathlib, zipfile, lzma, random
 from zipfile import ZIP_LZMA
 
-
+vaultpass = ""
 #collecting Information
 def save_input():
     site_value = site.get()
@@ -51,6 +51,34 @@ def close():
         zipfile.ZipFile(zfile, mode='w', compression=ZIP_LZMA, strict_timestamps=True, metadata_encoding=None)
         with zipfile.ZipFile(zfile, 'w') as myzip:
             myzip.write(file)
+            myzip.setpassword(vaultpass)
+            zipfile.ZipFile.close(myzip)
+    exit()
+
+def vault_window():
+    secondary_window = Toplevel(root)
+    secondary_window.title("Vault Password")
+    secondary_window.config(width=300, height=150)
+    secondary_window.attributes('-topmost', True)
+    global userpass
+    userpass = ttk.Entry(secondary_window, show='*')
+    userpass.place(x=20, y=50)
+    userpass_label = ttk.Label(secondary_window, text="Enter Vault Password")
+    userpass_label.place(x=75, y=25)
+    button_close = ttk.Button(
+        secondary_window,
+        text="Ok",
+        command=lambda: unlock_vault(secondary_window))
+    button_close.place(x=110, y=100)
+
+def unlock_vault(secondary_window):
+    global vaultpass
+    vaultpass = userpass.get().encode("utf-8")
+    if pathlib.Path('password.zip').is_file():
+        zipfile.ZipFile.extract('password.csv', path=None, pwd=vaultpass)
+    secondary_window.destroy()
+
+
 #defining list types
 low = "abcdefghijklmnopqrstuvwxyz"
 upp = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -107,6 +135,7 @@ button.place(x=100, y=160)
 
 button = Button(root, text="Save & Close", command=close)
 button.place(x=280, y=160)
-
+root.after(50, vault_window())
 root.mainloop()
+
 
