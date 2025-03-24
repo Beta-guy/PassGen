@@ -1,7 +1,8 @@
 #imports
 import random
 from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button
-
+import csv
+import pathlib
 
 #collecting Information
 def save_input():
@@ -30,7 +31,18 @@ def save_input():
         char_lists = upp+low+numbers+spe
     for num in range(int(max_value)):
         password += random.choice(char_lists)
-    messagebox.showinfo("Password", password)
+    default_row = ["Application", "Username", "Password"]
+    csv_row = [site_value, username_value, password]
+    file = pathlib.Path('password.csv').is_file()
+    if file == True:
+        with open('password.csv', 'a') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(csv_row)
+    else:
+        with open('password.csv', 'w') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(default_row)
+            writer.writerow(csv_row)
 #defining list types
 low = "abcdefghijklmnopqrstuvwxyz"
 upp = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
