@@ -1,8 +1,8 @@
 #imports
-import random
 from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button
-import csv
-import pathlib
+import csv, pathlib, zipfile, lzma, random
+from zipfile import ZIP_LZMA
+
 
 #collecting Information
 def save_input():
@@ -43,6 +43,14 @@ def save_input():
             writer = csv.writer(csv_file)
             writer.writerow(default_row)
             writer.writerow(csv_row)
+#save and close (compress csv file and delete original csv file)
+def close():
+    zfile = pathlib.Path('password.zip')
+    file = file = pathlib.Path('password.csv')
+    if file.is_file() == True:
+        zipfile.ZipFile(zfile, mode='w', compression=ZIP_LZMA, strict_timestamps=True, metadata_encoding=None)
+        with zipfile.ZipFile(zfile, 'w') as myzip:
+            myzip.write(file)
 #defining list types
 low = "abcdefghijklmnopqrstuvwxyz"
 upp = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -95,7 +103,10 @@ space = Checkbutton(root, text="Space Chars?", variable=space_val)
 space.place(x=280, y=120)
 
 button = Button(root, text="Generate Password", command=save_input)
-button.place(x=180, y=160)
+button.place(x=100, y=160)
+
+button = Button(root, text="Save & Close", command=close)
+button.place(x=280, y=160)
 
 root.mainloop()
 
