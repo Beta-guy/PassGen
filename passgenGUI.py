@@ -1,7 +1,9 @@
 #imports
 from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button, ttk, Toplevel
-import csv, pathlib, zipfile, lzma, random
-from zipfile import ZIP_LZMA
+import csv, pathlib, random, platform
+system = platform.system()
+
+
 
 vaultpass = ""
 #collecting Information
@@ -34,25 +36,34 @@ def save_input():
     default_row = ["Application", "Username", "Password"]
     csv_row = [site_value, username_value, password]
     file = pathlib.Path('password.csv').is_file()
-    if file == True:
-        with open('password.csv', 'a') as csv_file:
-            writer = csv.writer(csv_file)
-            writer.writerow(csv_row)
-    else:
-        with open('password.csv', 'w') as csv_file:
-            writer = csv.writer(csv_file)
-            writer.writerow(default_row)
-            writer.writerow(csv_row)
+    global system
+    match system:
+        case 'Linux':
+            if file:
+                with open('password.csv', 'a') as csv_file:
+                    writer = csv.writer(csv_file)
+                    writer.writerow(csv_row)
+            else:
+                with open('password.csv', 'w') as csv_file:
+                    writer = csv.writer(csv_file)
+                    writer.writerow(default_row)
+                    writer.writerow(csv_row)
+        case 'Windows':
+            if file:
+                with open('password.csv', 'a', newline='') as csv_file:
+                    writer = csv.writer(csv_file)
+                    writer.writerow(csv_row)
+            else:
+                with open('password.csv', 'w', newline='') as csv_file:
+                    writer = csv.writer(csv_file)
+                    writer.writerow(default_row)
+                    writer.writerow(csv_row)
 #save and close (compress csv file and delete original csv file)
 def close():
     zfile = pathlib.Path('password.zip')
-    file = file = pathlib.Path('password.csv')
-    if file.is_file() == True:
-        zipfile.ZipFile(zfile, mode='w', compression=ZIP_LZMA, strict_timestamps=True, metadata_encoding=None)
-        with zipfile.ZipFile(zfile, 'w') as myzip:
-            myzip.write(file)
-            myzip.setpassword(vaultpass)
-            zipfile.ZipFile.close(myzip)
+    file = pathlib.Path('password.csv')
+
+
     exit()
 
 def vault_window():
@@ -74,8 +85,7 @@ def vault_window():
 def unlock_vault(secondary_window):
     global vaultpass
     vaultpass = userpass.get().encode("utf-8")
-    if pathlib.Path('password.zip').is_file():
-        zipfile.ZipFile.extract('password.csv', path=None, pwd=vaultpass)
+
     secondary_window.destroy()
 
 
@@ -135,7 +145,7 @@ button.place(x=100, y=160)
 
 button = Button(root, text="Save & Close", command=close)
 button.place(x=280, y=160)
-root.after(50, vault_window())
+#root.after(50, vault_window())
 root.mainloop()
 
 
