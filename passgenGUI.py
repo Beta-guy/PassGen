@@ -2,7 +2,7 @@
 
 from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button, ttk, Toplevel
 import csv, pathlib, random, platform
-import base64,os,tkinter
+import base64,os,tkinter,atexit
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -64,8 +64,6 @@ def save_input():
 def close():
     global vaultpass
     encrypt_file(vaultpass, "password.csv", "password.csv")
-
-
     exit()
 
 def get_fernet_key(password, salt):
@@ -81,12 +79,14 @@ def get_fernet_key(password, salt):
 def encrypt_file(password, filepath, output_filepath):
     salt = os.urandom(16)
     key = get_fernet_key(password, salt)
-    print(key)
     cipher = Fernet(key)
-    with open(filepath, "rb") as file:
-        plaintext = file.read()
-
-    ciphertext = cipher.encrypt(plaintext)
+    try:
+        with open(filepath, "rb") as file:
+            plaintext = file.read()
+            ciphertext = cipher.encrypt(plaintext)
+    except FileNotFoundError as e:
+        print("File will be created.")
+        ciphertext = cipher.encrypt(plaintext)
 
     with open(output_filepath, "wb") as file:
         file.write(salt + ciphertext)
@@ -113,9 +113,9 @@ def vault_window():
     global vaultpass
     userpass = ttk.Entry(secondary_window, show='*')
     vaultpass = userpass.get()
-    userpass.place(x=20, y=50)
+    userpass.place(x=65, y=50)
     userpass_label = ttk.Label(secondary_window, text="Enter Vault Password")
-    userpass_label.place(x=75, y=25)
+    userpass_label.place(x=80, y=25)
     button_close = ttk.Button(
         secondary_window,
         text="Ok",
@@ -184,6 +184,7 @@ button.place(x=100, y=160)
 button = Button(root, text="Save & Close", command=close)
 button.place(x=280, y=160)
 root.after(50, vault_window())
+atexit.register(close)
 root.mainloop()
 
 
