@@ -97,7 +97,6 @@ def encrypt_file(password, filepath, output_filepath):
     backup = 'password.bak'
     shutil.copy(srcpath, backup)
 
-
 def decrypt_file(password, filepath, output_filepath):
     try:
         with open(filepath, "rb") as file:
