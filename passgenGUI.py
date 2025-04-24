@@ -1,8 +1,10 @@
 #imports
 
 from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button, ttk, Toplevel
-import csv, pathlib, random, platform
-import base64,os,tkinter,atexit
+import csv, pathlib, random, platform, shutil
+import base64,os,tkinter
+
+from PIL.ImageStat import Global
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -93,14 +95,29 @@ def encrypt_file(password, filepath, output_filepath):
 
 
 def decrypt_file(password, filepath, output_filepath):
-    with open(filepath, "rb") as file:
-        data_with_salt = file.read()
-        salt = data_with_salt[:16]
-        data = data_with_salt[16:]
-        key = get_fernet_key(password, salt)
-        cipher = Fernet(key)
+    srcpath = pathlib.Path(filepath)
+    backup = 'password.bak'
+    shutil.copy(srcpath, backup)
 
-        plaintext = cipher.decrypt(data)
+    try:
+        with open(filepath, "rb") as file:
+            data_with_salt = file.read()
+            salt = data_with_salt[:16]
+            data = data_with_salt[16:]
+            key = get_fernet_key(password, salt)
+            cipher = Fernet(key)
+
+            plaintext = cipher.decrypt(data)
+    except:
+        pathlib.Path.touch('password.csv')
+        with open(filepath, "rb") as file:
+            data_with_salt = file.read()
+            salt = data_with_salt[:16]
+            data = data_with_salt[16:]
+            key = get_fernet_key(password, salt)
+            cipher = Fernet(key)
+
+            plaintext = cipher.decrypt(data)
 
     with open(output_filepath, "wb") as file:
         file.write(plaintext)
@@ -129,6 +146,11 @@ def unlock_vault(secondary_window):
     except:
         tkinter.messagebox.showinfo("Error", "File not Encrypted")
     secondary_window.destroy()
+
+def on_exit():
+    global vaultpass
+    encrypt_file(vaultpass, "password.csv", "password.csv")
+    root.destroy()
 
 
 #defining list types
@@ -184,7 +206,7 @@ button.place(x=100, y=160)
 button = Button(root, text="Save & Close", command=close)
 button.place(x=280, y=160)
 root.after(50, vault_window())
-atexit.register(close)
+root.protocol("WM_DELETE_WINDOW", on_exit)
 root.mainloop()
 
 
