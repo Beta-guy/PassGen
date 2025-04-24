@@ -66,7 +66,7 @@ def save_input():
 def close():
     global vaultpass
     encrypt_file(vaultpass, "password.csv", "password.csv")
-    exit()
+    root.destroy()
 
 def get_fernet_key(password, salt):
     kdf = PBKDF2HMAC(
@@ -146,11 +146,6 @@ def unlock_vault(secondary_window):
         tkinter.messagebox.showinfo("Error", "File not Encrypted")
     secondary_window.destroy()
 
-def on_exit():
-    global vaultpass
-    encrypt_file(vaultpass, "password.csv", "password.csv")
-    root.destroy()
-
 
 #defining list types
 low = "abcdefghijklmnopqrstuvwxyz"
@@ -205,7 +200,7 @@ button.place(x=100, y=160)
 button = Button(root, text="Save & Close", command=close)
 button.place(x=280, y=160)
 root.after(50, vault_window())
-root.protocol("WM_DELETE_WINDOW", on_exit)
+root.protocol("WM_DELETE_WINDOW", close)
 root.mainloop()
 
 
