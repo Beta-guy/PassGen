@@ -93,12 +93,12 @@ def encrypt_file(password, filepath, output_filepath):
     with open(output_filepath, "wb") as file:
         file.write(salt + ciphertext)
 
-
-def decrypt_file(password, filepath, output_filepath):
     srcpath = pathlib.Path(filepath)
     backup = 'password.bak'
     shutil.copy(srcpath, backup)
 
+
+def decrypt_file(password, filepath, output_filepath):
     try:
         with open(filepath, "rb") as file:
             data_with_salt = file.read()
