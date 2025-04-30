@@ -3,8 +3,6 @@
 from tkinter import messagebox, Tk, Entry, Label, Checkbutton, IntVar, Button, ttk, Toplevel
 import csv, pathlib, random, platform, shutil
 import base64,os,tkinter
-
-from PIL.ImageStat import Global
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
