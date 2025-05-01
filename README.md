@@ -1,7 +1,7 @@
 # PassGen
 Password Generator Project
 
-Just a simple poject to get my feet wet in Python
+Just a simple project to get my feet wet in Python
 
 # Installation:
 just download:
